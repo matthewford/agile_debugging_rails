@@ -13,11 +13,16 @@ Agile Debugging Rails
    }, true);
 </script>
 
+* * * 
+
 A solution "book" for common Ruby on Rails problems.
 
 *Contributors*
 
 * [Matthew Ford](http://bitzesty.com)
+
+Github Repo:
+[http://github.com/matthewford/agile\_debugging\_rails/](http://github.com/matthewford/agile_debugging_rails/)
 
 The content of this book is licensed under the [Creative Commons Attribution-Noncommercial-Share Alike 3.0 license][]
 

@@ -16,6 +16,9 @@ Contributors
 ------------
 * [Matthew Ford](http://bitzesty.com)
 
+Github Repo:
+[http://github.com/matthewford/agile\_debugging\_rails/tree](http://github.com/matthewford/agile_debugging_rails/tree)
+
 Legal
 -----
 
