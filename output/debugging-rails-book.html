@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC
+    "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
+    "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd">
+<html xmlns:svg='http://www.w3.org/2000/svg' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head><meta content='application/xhtml+xml;charset=utf-8' http-equiv='Content-type' /><title>Agile Debugging Rails</title><link href='./book.css' rel='stylesheet' type='text/css' />
+</head>
+<body>
+<h1 id='agile_debugging_rails'>Agile Debugging Rails</h1>
+<div id='cse' style='width: 100%;'>Loading</div><script src='http://www.google.com/jsapi' type='text/javascript' /><script type='text/javascript'>
+   google.load('search', '1');
+   google.setOnLoadCallback(function(){
+      new google.search.CustomSearchControl('003580495747993702885:tyi7wionzh8').draw('cse');
+   }, true);
+</script>
+<p>A solution &#8220;book&#8221; for common Ruby on Rails problems.</p>
+
+<p><em>Contributors</em></p>
+
+<ul>
+<li><a href='http://bitzesty.com'>Matthew Ford</a></li>
+</ul>
+
+<p>The content of this book is licensed under the <a href='http://creativecommons.org/licenses/by-nc-sa/3.0/us/'>Creative Commons Attribution-Noncommercial-Share Alike 3.0 license</a></p>
+<div class='maruku_toc'><ul style='list-style: none;'><li><a href='#activerecord'>ActiveRecord</a><ul style='list-style: none;'><li><a href='#error_undefined_method'>Error: undefined method</a></li><li><a href='#action'>Action</a></li><li><a href='#error_model_not_saving'>Error: model not saving</a></li><li><a href='#action'>Action</a></li><li><a href='#error_mysql_duplicate_key'>Error: Mysql duplicate key</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#thinkingsphinx'>ThinkingSphinx</a><ul style='list-style: none;'><li><a href='#error_the_index_will_not_build'>Error: The index will not build</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#controllers'>Controllers</a><ul style='list-style: none;'><li><a href='#error_flash_messages_occuring_twice'>Error: Flash messages occuring twice</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#deploying'>Deploying</a><ul style='list-style: none;'><li><a href='#error_keep_releases_not_working'>Error: :keep_releases not working</a></li><li><a href='#action'>Action</a></li></ul></li></ul></div><hr />
+<h2 id='activerecord'>ActiveRecord</h2>
+
+<h3 id='error_undefined_method'>Error: undefined method</h3>
+
+<pre><code>undefined method `attribute&#39; for #&lt;Object:0xb70fad18&gt;</code></pre>
+
+<h3 id='action'>Action</h3>
+
+<ul>
+<li>Run/write migrations</li>
+
+<li>Define attribute in model</li>
+
+<li>If object comes from a session ensure you are not just passing an integer <code>@object = MyModel.find(session[:my_model])</code> not <code>@object = session[:my_model]</code></li>
+</ul>
+<hr />
+<h3 id='error_model_not_saving'>Error: model not saving</h3>
+
+<p>A model will not save but is valid</p>
+
+<h3 id='action'>Action</h3>
+
+<ul>
+<li>check custom callbacks, returning false (ie, .save) will halt the chain, instead use save! and rescue the exception</li>
+</ul>
+<hr />
+<h3 id='error_mysql_duplicate_key'>Error: Mysql duplicate key</h3>
+
+<pre><code>ActiveRecord::StatementInvalid: Mysql::Error: Duplicate entry for key &#39;PRIMARY</code></pre>
+
+<h3 id='action'>Action</h3>
+
+<ul>
+<li>Duplicate primary keys are likely to occure with <code>has_and_belongs_to_many</code> relations check the join table does <em>not</em> have an id column</li>
+
+<li>use :id =&gt; false in future migrations for join tables</li>
+</ul>
+<hr />
+<h2 id='thinkingsphinx'>ThinkingSphinx</h2>
+
+<h3 id='error_the_index_will_not_build'>Error: The index will not build</h3>
+
+<pre><code>ERROR: index &#39;model_core&#39;: sql_range_query: Unknown column &#39;model.attr&#39; in &#39;field list&#39;</code></pre>
+
+<h3 id='action'>Action</h3>
+
+<ul>
+<li>Ensure that your define_index is defined after any associations used in the index, otherwise it will try and find the field on the current model</li>
+
+<li>Run <code>rake ts:config</code></li>
+</ul>
+<hr />
+<h2 id='controllers'>Controllers</h2>
+
+<h3 id='error_flash_messages_occuring_twice'>Error: Flash messages occuring twice</h3>
+
+<p>The flash message is not cleared between requests</p>
+
+<h3 id='action'>Action</h3>
+
+<pre><code>flash.now[:notice] = &quot;This is a flash notice, that won&#39;t stick around&quot;</code></pre>
+<hr />
+<h2 id='deploying'>Deploying</h2>
+
+<h3 id='error_keep_releases_not_working'>Error: :keep_releases not working</h3>
+
+<p>You&#8217;ve set :keep_releases but the old releases are not being deleted</p>
+
+<h3 id='action'>Action</h3>
+
+<p>You need to also specify the callback for the cleanup task in your deploy.rb</p>
+
+<pre><code>after &quot;deploy:update&quot;, &quot;deploy:cleanup&quot;</code></pre>
+</body></html>
