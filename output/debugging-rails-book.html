@@ -12,8 +12,8 @@
    google.setOnLoadCallback(function(){
       new google.search.CustomSearchControl('003580495747993702885:tyi7wionzh8').draw('cse');
    }, true);
-</script>
-<p>A solution &#8220;book&#8221; for common Ruby on Rails problems.</p>
+</script><hr />
+<p>A solution &#8220;book&#8221; for common Ruby on Rails problems and tips for refactoring your code.</p>
 
 <p><em>Contributors</em></p>
 
@@ -21,8 +21,10 @@
 <li><a href='http://bitzesty.com'>Matthew Ford</a></li>
 </ul>
 
+<p>Github Repo: <a href='http://github.com/matthewford/agile_debugging_rails/'>http://github.com/matthewford/agile_debugging_rails/</a></p>
+
 <p>The content of this book is licensed under the <a href='http://creativecommons.org/licenses/by-nc-sa/3.0/us/'>Creative Commons Attribution-Noncommercial-Share Alike 3.0 license</a></p>
-<div class='maruku_toc'><ul style='list-style: none;'><li><a href='#activerecord'>ActiveRecord</a><ul style='list-style: none;'><li><a href='#error_undefined_method'>Error: undefined method</a></li><li><a href='#action'>Action</a></li><li><a href='#error_model_not_saving'>Error: model not saving</a></li><li><a href='#action'>Action</a></li><li><a href='#error_mysql_duplicate_key'>Error: Mysql duplicate key</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#thinkingsphinx'>ThinkingSphinx</a><ul style='list-style: none;'><li><a href='#error_the_index_will_not_build'>Error: The index will not build</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#controllers'>Controllers</a><ul style='list-style: none;'><li><a href='#error_flash_messages_occuring_twice'>Error: Flash messages occuring twice</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#deploying'>Deploying</a><ul style='list-style: none;'><li><a href='#error_keep_releases_not_working'>Error: :keep_releases not working</a></li><li><a href='#action'>Action</a></li></ul></li></ul></div><hr />
+<div class='maruku_toc'><ul style='list-style: none;'><li><a href='#activerecord'>ActiveRecord</a><ul style='list-style: none;'><li><a href='#error_undefined_method'>Error: undefined method</a></li><li><a href='#action'>Action</a></li><li><a href='#error_model_not_saving'>Error: model not saving</a></li><li><a href='#action'>Action</a></li><li><a href='#error_mysql_duplicate_key'>Error: Mysql duplicate key</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#thinkingsphinx'>ThinkingSphinx</a><ul style='list-style: none;'><li><a href='#error_sql_range_query_unknown_column'>Error: sql_range_query: Unknown column</a></li><li><a href='#action'>Action</a></li><li><a href='#error_warning_error_loading_model'>Error: Warning: Error loading model</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#controllers'>Controllers</a><ul style='list-style: none;'><li><a href='#error_flash_messages_occuring_twice'>Error: Flash messages occuring twice</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#deploying'>Deploying</a><ul style='list-style: none;'><li><a href='#error_keep_releases_not_working'>Error: :keep_releases not working</a></li><li><a href='#action'>Action</a></li></ul></li></ul></div><hr />
 <h2 id='activerecord'>ActiveRecord</h2>
 
 <h3 id='error_undefined_method'>Error: undefined method</h3>
@@ -41,13 +43,21 @@
 <hr />
 <h3 id='error_model_not_saving'>Error: model not saving</h3>
 
-<p>A model will not save but is valid</p>
+<p>Calling <code>model.save</code> returns <code>false</code> but the model is valid.</p>
 
 <h3 id='action'>Action</h3>
 
-<ul>
-<li>check custom callbacks, returning false (ie, .save) will halt the chain, instead use save! and rescue the exception</li>
-</ul>
+<p>Check for before_* callbacks that are returning false, as this will halt all further callbacks and not save the model. This can occur when the last line in in a callback sets an attribute to false.</p>
+
+<pre><code>before_update :need_to_set_attribute
+
+def need_to_set_attribute
+  self.never_updated = false
+ end</code></pre>
+
+<p>One way to avoid this is to make sure that all callbacks return true. In the previous example this could be done by using <code>update_attribute</code> (calls <code>save(false)</code> to skip validations) or as Ruby sets the return value of methods as their last expression, simply add <code>true</code> before ending the method.</p>
+
+<p>Another way to prevent this is to call <code>.save!</code> and rescue the <code>ActiveRecord::RecordNotSaved</code> exception that occurs when a callback returns <code>false</code>.</p>
 <hr />
 <h3 id='error_mysql_duplicate_key'>Error: Mysql duplicate key</h3>
 
@@ -56,14 +66,16 @@
 <h3 id='action'>Action</h3>
 
 <ul>
-<li>Duplicate primary keys are likely to occure with <code>has_and_belongs_to_many</code> relations check the join table does <em>not</em> have an id column</li>
+<li>Duplicate primary keys are likely to occur with <code>has_and_belongs_to_many</code> relations check the join table does <em>not</em> have an id column</li>
 
 <li>use :id =&gt; false in future migrations for join tables</li>
 </ul>
 <hr />
 <h2 id='thinkingsphinx'>ThinkingSphinx</h2>
 
-<h3 id='error_the_index_will_not_build'>Error: The index will not build</h3>
+<h3 id='error_sql_range_query_unknown_column'>Error: sql_range_query: Unknown column</h3>
+
+<p>The index will not build as an attribute is not found on the model</p>
 
 <pre><code>ERROR: index &#39;model_core&#39;: sql_range_query: Unknown column &#39;model.attr&#39; in &#39;field list&#39;</code></pre>
 
@@ -74,6 +86,18 @@
 
 <li>Run <code>rake ts:config</code></li>
 </ul>
+
+<h3 id='error_warning_error_loading_model'>Error: Warning: Error loading model</h3>
+
+<p>When you generate your search configuration file it says there is an error loading the models and the generated config is empty. When <code>rake ts:in</code> is run there will be the following error:</p>
+
+<pre><code>FATAL: no sources found in config file</code></pre>
+
+<h3 id='action'>Action</h3>
+
+<p>Check your define_index methods that attributes or fields do not use a reserved name such as <code>tags.id</code>, if this is the case use a symbol:</p>
+
+<pre><code>has tags(:id), :as =&gt; :tag_ids</code></pre>
 <hr />
 <h2 id='controllers'>Controllers</h2>
 
