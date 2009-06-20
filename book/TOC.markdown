@@ -15,8 +15,8 @@ Agile Debugging Rails
 
 * * * 
 
-A solution "book" for common Ruby on Rails problems and tips for refactoring 
-your code.
+A troubleshooting solution "book" for common Ruby on Rails problems 
+and tips for refactoring your code.
 
 *Contributors*
 

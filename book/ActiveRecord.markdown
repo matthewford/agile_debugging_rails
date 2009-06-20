@@ -16,15 +16,15 @@ ActiveRecord
 Calling `model.save` returns `false` but the model is valid.
 
 ### Action
-Check for before_* callbacks that are returning false, as this will halt all
+Check for `before_*` callbacks that return false, as this will hault all
 further callbacks and not save the model. This can occur when the last line in
 in a callback sets an attribute to false.
 
-	before_update :need_to_set_attribute
-	
-	def need_to_set_attribute
-	  self.never_updated = false
-	 end
+	  before_update :need_to_set_attribute
+
+	  def need_to_set_attribute
+	    self.never_updated = false
+	  end
 	 
 One way to avoid this is to make sure that all callbacks return true. In 
 the previous example this could be done by using `update_attribute` (calls 

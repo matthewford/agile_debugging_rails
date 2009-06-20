@@ -1,7 +1,8 @@
 Agile Debugging Rails
 =====================
 
-A solution "book" for common Ruby on Rails problems.
+A troubleshooting solution "book" for common Ruby on Rails problems 
+and tips for refactoring your code.
 
 format adapted from the [sinatra-book][]
 
