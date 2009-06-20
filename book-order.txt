@@ -1,5 +1,6 @@
 TOC.markdown
 ActiveRecord.markdown
+ActiveRecordTips.markdown
 ThinkingSphinx.markdown
 Controllers.markdown
 Deploying.markdown
