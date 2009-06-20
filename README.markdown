@@ -2,7 +2,7 @@ Agile Debugging Rails
 =====================
 
 A troubleshooting solution "book" for common Ruby on Rails problems 
-and tips for refactoring your code. Viewable at [deubg.bitzesty.com][]
+and tips for refactoring your code. Viewable at [debug.bitzesty.com][]
 
 format adapted from the [sinatra-book][]
 
