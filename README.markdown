@@ -2,7 +2,7 @@ Agile Debugging Rails
 =====================
 
 A troubleshooting solution "book" for common Ruby on Rails problems 
-and tips for refactoring your code.
+and tips for refactoring your code. Viewable at [deubg.bitzesty.com][]
 
 format adapted from the [sinatra-book][]
 
@@ -25,6 +25,7 @@ Legal
 
 The content of this book is licensed under the [Creative Commons Attribution-Noncommercial-Share Alike 3.0 license][]
 
+[debug.bitzesty.com]:http://debug.bitzesty.com
 [sinatra-book]:http://github.com/sinatra/sinatra-book/tree
 [Creative Commons Attribution-Noncommercial-Share Alike 3.0 license]: http://creativecommons.org/licenses/by-nc-sa/3.0/us/
 
