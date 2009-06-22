@@ -24,8 +24,7 @@ reserved name such as `tags.id`, if this is the case use a symbol:
 
     has tags(:id), :as => :tag_ids
 
-### Error: Filtering on DateTime fields returns an empty arrar
-When using a filter with a Date Time no results are found eg:
+### Error: Filtering on a DateTime field returns no results
 
     Post.search :with => {:published_at => 3.days.ago..Time.now}
     => []
