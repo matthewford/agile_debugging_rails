@@ -13,7 +13,7 @@
       new google.search.CustomSearchControl('003580495747993702885:tyi7wionzh8').draw('cse');
    }, true);
 </script><hr />
-<p>A solution &#8220;book&#8221; for common Ruby on Rails problems and tips for refactoring your code.</p>
+<p>A troubleshooting solution &#8220;book&#8221; for common Ruby on Rails problems and tips for refactoring your code.</p>
 
 <p><em>Contributors</em></p>
 
@@ -24,7 +24,7 @@
 <p>Github Repo: <a href='http://github.com/matthewford/agile_debugging_rails/'>http://github.com/matthewford/agile_debugging_rails/</a></p>
 
 <p>The content of this book is licensed under the <a href='http://creativecommons.org/licenses/by-nc-sa/3.0/us/'>Creative Commons Attribution-Noncommercial-Share Alike 3.0 license</a></p>
-<div class='maruku_toc'><ul style='list-style: none;'><li><a href='#activerecord'>ActiveRecord</a><ul style='list-style: none;'><li><a href='#error_undefined_method'>Error: undefined method</a></li><li><a href='#action'>Action</a></li><li><a href='#error_model_not_saving'>Error: model not saving</a></li><li><a href='#action'>Action</a></li><li><a href='#error_mysql_duplicate_key'>Error: Mysql duplicate key</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#thinkingsphinx'>ThinkingSphinx</a><ul style='list-style: none;'><li><a href='#error_sql_range_query_unknown_column'>Error: sql_range_query: Unknown column</a></li><li><a href='#action'>Action</a></li><li><a href='#error_warning_error_loading_model'>Error: Warning: Error loading model</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#controllers'>Controllers</a><ul style='list-style: none;'><li><a href='#error_flash_messages_occuring_twice'>Error: Flash messages occuring twice</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#deploying'>Deploying</a><ul style='list-style: none;'><li><a href='#error_keep_releases_not_working'>Error: :keep_releases not working</a></li><li><a href='#action'>Action</a></li></ul></li></ul></div><hr />
+<div class='maruku_toc'><ul style='list-style: none;'><li><a href='#activerecord'>ActiveRecord</a><ul style='list-style: none;'><li><a href='#error_undefined_method'>Error: undefined method</a></li><li><a href='#action'>Action</a></li><li><a href='#error_model_not_saving'>Error: model not saving</a></li><li><a href='#action'>Action</a></li><li><a href='#error_mysql_duplicate_key'>Error: Mysql duplicate key</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#activerecord_tips'>ActiveRecord Tips</a><ul style='list-style: none;'><li><a href='#law_of_demeter'>Law of Demeter</a></li></ul></li><li><a href='#thinkingsphinx'>ThinkingSphinx</a><ul style='list-style: none;'><li><a href='#error_sql_range_query_unknown_column'>Error: sql_range_query: Unknown column</a></li><li><a href='#action'>Action</a></li><li><a href='#error_warning_error_loading_model'>Error: Warning: Error loading model</a></li><li><a href='#action'>Action</a></li><li><a href='#error_filtering_on_datetime_fields_returns_an_empty_arrar'>Error: Filtering on DateTime fields returns an empty arrar</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#controllers'>Controllers</a><ul style='list-style: none;'><li><a href='#error_flash_messages_occuring_twice'>Error: Flash messages occuring twice</a></li><li><a href='#action'>Action</a></li></ul></li><li><a href='#deploying'>Deploying</a><ul style='list-style: none;'><li><a href='#error_keep_releases_not_working'>Error: :keep_releases not working</a></li><li><a href='#action'>Action</a></li></ul></li></ul></div><hr />
 <h2 id='activerecord'>ActiveRecord</h2>
 
 <h3 id='error_undefined_method'>Error: undefined method</h3>
@@ -47,13 +47,13 @@
 
 <h3 id='action'>Action</h3>
 
-<p>Check for before_* callbacks that are returning false, as this will halt all further callbacks and not save the model. This can occur when the last line in in a callback sets an attribute to false.</p>
+<p>Check for <code>before_*</code> callbacks that return false, as this will hault all further callbacks and not save the model. This can occur when the last line in in a callback sets an attribute to false.</p>
 
-<pre><code>before_update :need_to_set_attribute
+<pre><code>  before_update :need_to_set_attribute
 
-def need_to_set_attribute
-  self.never_updated = false
- end</code></pre>
+  def need_to_set_attribute
+    self.never_updated = false
+  end</code></pre>
 
 <p>One way to avoid this is to make sure that all callbacks return true. In the previous example this could be done by using <code>update_attribute</code> (calls <code>save(false)</code> to skip validations) or as Ruby sets the return value of methods as their last expression, simply add <code>true</code> before ending the method.</p>
 
@@ -70,6 +70,28 @@ def need_to_set_attribute
 
 <li>use :id =&gt; false in future migrations for join tables</li>
 </ul>
+<hr />
+<h2 id='activerecord_tips'>ActiveRecord Tips</h2>
+
+<h3 id='law_of_demeter'>Law of Demeter</h3>
+
+<p>The <a href='http://en.wikipedia.org/wiki/Law_of_Demeter'>Law of Demeter</a> in a Rails context can be interpreted as, do not chain multiple method calls, for example:</p>
+
+<pre><code>@user.account.company_name</code></pre>
+
+<p>You can make use of the delegate method to expose the methods of the associated models on the current model.</p>
+
+<pre><code>class User &lt; ActiveRecord::Base
+  belongs_to :account
+  
+  delegate :company_name, :to =&gt; :account
+end</code></pre>
+
+<p>The first example can now be rewritten as:</p>
+
+<pre><code>@user.company_name</code></pre>
+
+<p>If your association can be <code>nil</code> set the following option, <code>:allow_nil =&gt; true</code> otherwise an exception will be raised</p>
 <hr />
 <h2 id='thinkingsphinx'>ThinkingSphinx</h2>
 
@@ -98,6 +120,19 @@ def need_to_set_attribute
 <p>Check your define_index methods that attributes or fields do not use a reserved name such as <code>tags.id</code>, if this is the case use a symbol:</p>
 
 <pre><code>has tags(:id), :as =&gt; :tag_ids</code></pre>
+
+<h3 id='error_filtering_on_datetime_fields_returns_an_empty_arrar'>Error: Filtering on DateTime fields returns an empty arrar</h3>
+
+<p>When using a filter with a Date Time no results are found eg:</p>
+
+<pre><code>Post.search :with =&gt; {:published_at =&gt; 3.days.ago..Time.now}
+=&gt; []</code></pre>
+
+<h3 id='action'>Action</h3>
+
+<p>Ensure that you have specified the type of the field in your index</p>
+
+<pre><code>has :published_at, :type =&gt; :datetime</code></pre>
 <hr />
 <h2 id='controllers'>Controllers</h2>
 
